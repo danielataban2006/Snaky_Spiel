@@ -12,47 +12,65 @@ public class Snake{
         System.out.println("                                                        l for left");
         System.out.println("                                                        r for right");
 
-        Point spielerPosition=new Point(4, 19);
-        Point schlangePosition=new Point(29, 4);
-        Point turPosition=new Point(0, 5);
-        Point goldPosition=new Point(5,5);
-        boolean goingon=true;
-        boolean goldGesammelt=false;
+        String play="Y";
+        Scanner scanner=new Scanner(System.in);
 
-        //Spielbrett:
-        while (goingon){                                                 
-            // zuerst zeichnen wir das Feld
-            for (int y=0; y<20; y++){
-                for (int x=0; x<40; x++){
-                    if(x==(spielerPosition.getX()) && y==(spielerPosition.getY())){
-                        System.out.print("P");
-                    }else if(x==schlangePosition.getX() && y==schlangePosition.getY()){
-                        System.out.print("S");
-                    }else if(x==turPosition.getX() && y==turPosition.getY()&& !turPosition.equals(spielerPosition)){
-                        System.out.print("T");
-                    }else if(x==goldPosition.getX() && y==goldPosition.getY() && !goldGesammelt){
-                        System.out.print("G");
-                    }else{
-                        System.out.print(".");
+        int randomNrx;
+        int randomNry;
+
+        while (play.equals("Y")){
+            // random starting Positions everytime you start the game
+            randomNrx=(int)(Math.random()*40);
+            randomNry=(int)(Math.random()*20);
+            Point spielerPosition=new Point(randomNrx, randomNry);
+            randomNrx=(int)(Math.random()*40);
+            randomNry=(int)(Math.random()*20);
+            Point schlangePosition=new Point(randomNrx, randomNry);
+            randomNrx=(int)(Math.random()*40);
+            randomNry=(int)(Math.random()*20);
+            Point turPosition=new Point(randomNrx, randomNry);
+            randomNrx=(int)(Math.random()*40);
+            randomNry=(int)(Math.random()*20);
+            Point goldPosition=new Point(randomNrx,randomNry);
+            boolean goingon=true;
+            boolean goldGesammelt=false;
+
+            //Spielbrett:
+            while (goingon){                                                 
+                // zuerst zeichnen wir das Feld
+                for (int y=0; y<20; y++){
+                    for (int x=0; x<40; x++){
+                        if(x==(spielerPosition.getX()) && y==(spielerPosition.getY())){
+                            System.out.print("P");
+                        }else if(x==schlangePosition.getX() && y==schlangePosition.getY()){
+                            System.out.print("S");
+                        }else if(x==turPosition.getX() && y==turPosition.getY()&& !turPosition.equals(spielerPosition)){
+                            System.out.print("T");
+                        }else if(x==goldPosition.getX() && y==goldPosition.getY() && !goldGesammelt){
+                            System.out.print("G");
+                        }else{
+                            System.out.print(".");
+                        }
                     }
-                }
 
+                System.out.println("");
+                }
+                // bewegen und prüfen
+                bewegeSpieler(spielerPosition);         // dann bewegen wir den Spieler
+                bewegeSchlange(schlangePosition, spielerPosition);                   // dann bewegt sich die Schlange in Richtung des Spielers
+                goingon=schlangefrisstSpielernicht(spielerPosition, schlangePosition);    // dann prüfen wir ob die Schlange nach dem Zug des Spielers diesen gegessen hat. 
+                goldGesammelt=proofGoldsack(goldGesammelt, goldPosition, spielerPosition);
+                if(turPosition.equals(spielerPosition) && goldGesammelt){      // dann prüfen wir ob der Spieler gewonnen hat, indem er das Gold gesammelt und schon an der Position der Tür steht
+                    goingon=false;
+                    System.out.println("---YOU---WIN---");
+                    break;
+                }
+            }
             System.out.println("");
-            }
-            // bewegen und prüfen
-            bewegeSpieler(spielerPosition);         // dann bewegen wir den Spieler
-            bewegeSchlange(schlangePosition, spielerPosition);                   // dann bewegt sich die Schlange in Richtung des Spielers
-            goingon=schlangefrisstSpielernicht(spielerPosition, schlangePosition);    // dann prüfen wir ob die Schlange nach dem Zug des Spielers diesen gegessen hat. 
-            goldGesammelt=proofGoldsack(goldGesammelt, goldPosition, spielerPosition);
-            if(turPosition.equals(spielerPosition) && goldGesammelt){      // dann prüfen wir ob der Spieler gewonnen hat, indem er das Gold gesammelt und schon an der Position der Tür steht
-                goingon=false;
-                System.out.println("---YOU---WIN---");
-                break;
-            }
+            System.out.println("---TRY---AGAIN---?--- (Y/n)");
+            System.out.println("");
+            play=scanner.next();
         }
-        System.out.println("");
-        System.out.println("---TRY---AGAIN---?---");
-        System.out.println("");
     }
 
     // Methode bewegeSpieler, die je nach Eingabe per Terminal den Spieler um ein Feld bewegt, gleichzeitig wird geprüft ob die Eingabe und ergebende Position gültig ist
